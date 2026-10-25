@@ -1,0 +1,306 @@
+{
+  "decoder": "Pillow 13.0.0",
+  "python": "3.11.0",
+  "cases": [
+    {
+      "file": "cm16-palette24-from-index-300.tga",
+      "sha256": "ccdd8b8b72ed58fcca06e3be9545389a43a1a678d3964032083cbbe3d6050722",
+      "status": "rejected",
+      "error": "OSError: cannot load this image"
+    },
+    {
+      "file": "cm8-palette15.tga",
+      "sha256": "9fa384cc9e7d3ad388098db1bfb98a16f47181f6972212c1be809fc111aa9225",
+      "status": "rejected",
+      "error": "UnidentifiedImageError: cannot identify image file 'tests\\\\TgaViewer.Core.Tests\\\\Reference\\\\inputs\\\\cm8-palette15.tga'"
+    },
+    {
+      "file": "cm8-palette16.tga",
+      "sha256": "badae9a1382e11402e4545e11cd8c2fe881891d3f52a8e2f8c5d643b5fd7c0cb",
+      "mode": "P",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/cm8-palette16.rgba"
+    },
+    {
+      "file": "cm8-palette24-from-index-16.tga",
+      "sha256": "137260ec6c2b7adac3d520dff11b4cdd89a2a9a73954e1b1c9a5440948d2b48a",
+      "mode": "P",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/cm8-palette24-from-index-16.rgba"
+    },
+    {
+      "file": "cm8-palette24.tga",
+      "sha256": "26971709bd68453e6dc7a6e6903dbf3ecfdef81b98ac162768edbfe70ab0fa77",
+      "mode": "P",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/cm8-palette24.rgba"
+    },
+    {
+      "file": "cm8-palette32.tga",
+      "sha256": "7e3bf8d3d48e6943b010e3cd6213c857028021f80f8326311460033d5d896c47",
+      "mode": "P",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/cm8-palette32.rgba"
+    },
+    {
+      "file": "grey16-with-alpha.tga",
+      "sha256": "6f33da7658ae12cab54a865dfebb9a5febf2a7ce4cec62403e14e003f6cb8a56",
+      "mode": "LA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/grey16-with-alpha.rgba"
+    },
+    {
+      "file": "grey8-bottom-left.tga",
+      "sha256": "a065e08bc66a55a74b49196fed367112b9415604c644a22d6499e18a589b4ce3",
+      "mode": "L",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/grey8-bottom-left.rgba"
+    },
+    {
+      "file": "grey8-top-right.tga",
+      "sha256": "1c4b98b74ee0b91fd2ceb4b3016a7286e35869568c13c95cf1a00d71d2c06052",
+      "mode": "L",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/grey8-top-right.rgba"
+    },
+    {
+      "file": "interleaved-four-way.tga",
+      "sha256": "ff2f4fb71fe76862aa7342258c951c3f426b712eb840658d427f5549cf926558",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/interleaved-four-way.rgba"
+    },
+    {
+      "file": "interleaved-two-way.tga",
+      "sha256": "4c069906c5f7e4e15be6d4ebc1be3bbcbca9c522734a07abe1e69ecd26c7a871",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/interleaved-two-way.rgba"
+    },
+    {
+      "file": "rle-cm8-palette24-within-rows.tga",
+      "sha256": "654834e47170240fa5b46fe472055406a0d7ccbc8dc8a192b77e2641ca7563b9",
+      "mode": "P",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/rle-cm8-palette24-within-rows.rgba"
+    },
+    {
+      "file": "rle-grey16-with-alpha-within-rows.tga",
+      "sha256": "6400126e134b7c507563f8c154e06197fa93d4f2da1d9b376a3f0005a3ced361",
+      "mode": "LA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/rle-grey16-with-alpha-within-rows.rgba"
+    },
+    {
+      "file": "rle-grey8-across-rows.tga",
+      "sha256": "0407b2e65341df23433afdc6490be4f1a5f0a432f095b40a48d32485660818fc",
+      "mode": "L",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/rle-grey8-across-rows.rgba"
+    },
+    {
+      "file": "rle-tc16-across-rows.tga",
+      "sha256": "a82433a2f50cf5242e9eff1b185168cd33c4328e7bf042e6a11b086c88806f61",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/rle-tc16-across-rows.rgba"
+    },
+    {
+      "file": "rle-tc24-across-rows-top-left.tga",
+      "sha256": "97175c0ad0186e0a1347e33e2022ff155be9a5fa325689f2c42a86d060e99942",
+      "status": "rejected",
+      "error": "OSError: buffer overrun when reading image file"
+    },
+    {
+      "file": "rle-tc24-across-rows-top-right.tga",
+      "sha256": "58e750d302b3d38d298475c4a97bc4dab79be6c7360042beface4019f06d3ad8",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/rle-tc24-across-rows-top-right.rgba"
+    },
+    {
+      "file": "rle-tc24-wide-rows.tga",
+      "sha256": "dff80be99f0fb3ca5d87cd8d19f75c07945d7b2bb45c21c038d6b95f838801c3",
+      "mode": "RGB",
+      "width": 300,
+      "height": 5,
+      "status": "decoded",
+      "pixels": "pillow/rle-tc24-wide-rows.rgba"
+    },
+    {
+      "file": "rle-tc24-within-rows.tga",
+      "sha256": "632a346ddd851a4ecacb9326afcf3218f037ab1899b73d6872e44a7f7c8d4dca",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/rle-tc24-within-rows.rgba"
+    },
+    {
+      "file": "rle-tc32-across-rows.tga",
+      "sha256": "68a23aec56dc1c7e21b622830ce82e6c1d25e0c7894ff6833dd64c4051e5c747",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/rle-tc32-across-rows.rgba"
+    },
+    {
+      "file": "tc15.tga",
+      "sha256": "392299796295022a7845ed147ead9f93766513ea985446d56fa7051cbf67ff9d",
+      "status": "rejected",
+      "error": "UnidentifiedImageError: cannot identify image file 'tests\\\\TgaViewer.Core.Tests\\\\Reference\\\\inputs\\\\tc15.tga'"
+    },
+    {
+      "file": "tc16-attribute-bits-0-top-left.tga",
+      "sha256": "1e3dfb96c8a5e8e1d419823ccbe51b8d3973c5cc70216e076605122d27fa1d43",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc16-attribute-bits-0-top-left.rgba"
+    },
+    {
+      "file": "tc16-attribute-bits-1.tga",
+      "sha256": "7447f1cb0cfe0f619f7b846adda60530000419d8e84b620f3909500da3f0ad70",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc16-attribute-bits-1.rgba"
+    },
+    {
+      "file": "tc24-bottom-left.tga",
+      "sha256": "c6c47c9fdd1a45703b17c8fd5aea190dcdfc90bd9b56e7234facfc77f3f7b922",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc24-bottom-left.rgba"
+    },
+    {
+      "file": "tc24-bottom-right.tga",
+      "sha256": "f442d3bf6a52df620551c24cd880e154ed3ab18b530beb71e9c890530c2a347e",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc24-bottom-right.rgba"
+    },
+    {
+      "file": "tc24-image-id.tga",
+      "sha256": "a7b3fce4f4d74ab5bd956769086ebce97a4160fc2855657243028ef3e93aa774",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc24-image-id.rgba"
+    },
+    {
+      "file": "tc24-top-left.tga",
+      "sha256": "b3e093353f30ab39e1427c62bc199056fa9e5e84ded0243cdbc4a0e6c22d2d3e",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc24-top-left.rgba"
+    },
+    {
+      "file": "tc24-top-right.tga",
+      "sha256": "84092fcd5e1f9dc31234c64400f8dfec90919b7514698e5a333cd2a82e25dac6",
+      "mode": "RGB",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc24-top-right.rgba"
+    },
+    {
+      "file": "tc24-unused-colour-map.tga",
+      "sha256": "3c7a05a249d095d5f16471b32079aac3d30fa66781325ba6f03088e7ebd3f4de",
+      "status": "rejected",
+      "error": "ValueError: unrecognized image mode"
+    },
+    {
+      "file": "tc32-alpha-bits-0-top-left.tga",
+      "sha256": "b1d1d34221f724679048ad03268250fcbc7c99dd352c16d191d6de6b36602647",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc32-alpha-bits-0-top-left.rgba"
+    },
+    {
+      "file": "tc32-alpha-bits-8.tga",
+      "sha256": "eb34946f0760d5f780468032ed46a463ea5fc49470b4b60ef4dd142c033efbcf",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tc32-alpha-bits-8.rgba"
+    },
+    {
+      "file": "tga2-attributes-0.tga",
+      "sha256": "2d7ba26d2f03c35c9947d9a15d24c74b68963b9d5d03216abbd929dbfd72816c",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tga2-attributes-0.rgba"
+    },
+    {
+      "file": "tga2-attributes-3-all-structures.tga",
+      "sha256": "a270415d28c98533497b7bea32ef871f1f25438cbae441daff419f6b34c9106c",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tga2-attributes-3-all-structures.rgba"
+    },
+    {
+      "file": "tga2-attributes-4-premultiplied.tga",
+      "sha256": "1ec02321e7c3c6033eb910b9d8c4e692bd30840c0a5a3b21ac12561c35eb1e1f",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tga2-attributes-4-premultiplied.rgba"
+    },
+    {
+      "file": "tga2-rle-attributes-3.tga",
+      "sha256": "77db105d7f5839a85e275e9cdf8687cc7bb9e9fcbb942394a2042ff2e16e6792",
+      "mode": "RGBA",
+      "width": 23,
+      "height": 17,
+      "status": "decoded",
+      "pixels": "pillow/tga2-rle-attributes-3.rgba"
+    }
+  ]
+}
