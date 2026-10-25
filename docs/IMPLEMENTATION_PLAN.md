@@ -1,4 +1,4 @@
-# TGA Viewer — Implementation Plan
+# TGAPeek — Implementation Plan
 
 > **Document status** *(2026-10-25)*
 > - **Version 1 is implemented** (see §14). The owner asked for the complete Version 1 without phase-by-phase approval, with routine technical decisions made within the brief. **§14 records what was actually built, the decisions taken on the §13 issues, test results and what remains blocked.** Where §1–§11 differ from §14, §14 is current.
@@ -63,9 +63,9 @@ Revision 2 adds your eight requirements. These are:
 ## 1. Architecture (unchanged shape: Core / App / Tests, WinForms, no export)
 
 ```
-TgaViewer.slnx
+TGAPeek.slnx
 global.json                      pin SDK 10.0.402, rollForward latestFeature
-src/TgaViewer.Core/              net10.0, no UI references, NO NuGet packages
+src/TGAPeek.Core/              net10.0, no UI references, NO NuGet packages
     TgaHeader.cs                 18-byte header parse + validation
     TgaDecoder.cs                byte[] -> TgaDecodeResult (pure, no file I/O)
     PixelReaders.cs              8/15/16/24/32-bit + palette readers
@@ -75,9 +75,9 @@ src/TgaViewer.Core/              net10.0, no UI references, NO NuGet packages
     DisplayRenderer.cs           TgaImage + DisplayOptions -> display buffer (pure, testable)
     TgaDecodeOptions.cs          limits, AllowPartial
     TgaException.cs              Invalid / Unsupported / LimitExceeded (+ ReasonCode)
-src/TgaViewer.App/               net10.0-windows WinForms exe, NO NuGet packages
+src/TGAPeek.App/               net10.0-windows WinForms exe, NO NuGet packages
     Program.cs, MainForm.cs, ImageCanvas.cs, PixelInspectorPanel.cs, InfoPanel.cs, BitmapConverter.cs
-tests/TgaViewer.Core.Tests/      xUnit (test-only packages)
+tests/TGAPeek.Core.Tests/      xUnit (test-only packages)
     Golden/                      hand-authored byte arrays + hand-written expected pixels
     Builder/TgaTestFileBuilder.cs  combinatorial generator (itself checked against Golden/)
     Reference/                   independent-decoder expected outputs (needs approval, see §6)
@@ -256,7 +256,7 @@ The rules below cover the footer, the extension area, the developer directory, t
    - **Proposed commands** (exact Pillow version to be stated when I ask):
      1. `py -3.11 -m venv tools\reference\.venv`
      2. `tools\reference\.venv\Scripts\python.exe -m pip install pillow==<version>`. This downloads from PyPI.
-     3. `tools\reference\.venv\Scripts\python.exe -I tools\reference\make_references.py <inputs> tests\TgaViewer.Core.Tests\Reference`
+     3. `tools\reference\.venv\Scripts\python.exe -I tools\reference\make_references.py <inputs> tests\TGAPeek.Core.Tests\Reference`
    - The script and its output (raw RGBA + JSON) are committed. Tests compare our **decoded data** (not the display output) and run without Python.
    - **Agreement levels are recorded per case in a manifest:**
      - **Exact:** byte-for-byte agreement expected. Plain types 1/2/3/9/10/11 at 8/24/32 bpp, top/bottom origins, palette offsets.
@@ -384,11 +384,11 @@ The rules below cover the footer, the extension area, the developer directory, t
    - Steps carried out:
    1. `git branch -m main`.
    2. `dotnet new gitignore`, then `dotnet new globaljson --sdk-version 10.0.402 --roll-forward latestFeature`. Add a hand-written `.editorconfig`, `Directory.Build.props` (nullable, implicit usings, deterministic builds), `README.md` and `CLAUDE.md`.
-   3. Create the solution: `dotnet new sln -n TgaViewer` (.slnx).
+   3. Create the solution: `dotnet new sln -n TGAPeek` (.slnx).
    4. Create the projects:
-      - `dotnet new classlib` → `src/TgaViewer.Core` (net10.0; Core sets `TreatWarningsAsErrors`)
-      - `dotnet new winforms` → `src/TgaViewer.App` (net10.0-windows, PerMonitorV2, empty `MainForm`, references Core)
-      - `dotnet new xunit --no-restore` → `tests/TgaViewer.Core.Tests`
+      - `dotnet new classlib` → `src/TGAPeek.Core` (net10.0; Core sets `TreatWarningsAsErrors`)
+      - `dotnet new winforms` → `src/TGAPeek.App` (net10.0-windows, PerMonitorV2, empty `MainForm`, references Core)
+      - `dotnet new xunit --no-restore` → `tests/TGAPeek.Core.Tests`
    5. In the test project, **remove the template's `coverlet.collector`**. It's an extra dependency nobody approved. Keep only xunit, xunit.runner.visualstudio and Microsoft.NET.Test.Sdk.
    6. Add the projects to the solution. Replace the template placeholders (`Class1`, `Form1`, `UnitTest1`).
    7. Add a minimal `TgaDecodeOptions` (default limits) plus a trivial test of its defaults.
@@ -464,7 +464,7 @@ The plan above was written before [PROJECT_BRIEF.md](PROJECT_BRIEF.md) arrived. 
 
 ### 13.2 Brief requirements the plan leaves out (proposed additions; no conflict)
 
-- **B1 (§5):** Remember window size and position. Proposal: a small settings file in `%LOCALAPPDATA%\TgaViewer`, not the registry.
+- **B1 (§5):** Remember window size and position. Proposal: a small settings file in `%LOCALAPPDATA%\TGAPeek`, not the registry.
 - **B2 (§6):** Several paths on the command line need defined, documented behaviour. Proposal: open the first file, and ←/→ steps through the given files in order.
 - **B3 (§6):** Investigate single-instance operation with file forwarding (Explorer can start one process per selected file). Implement it only if reliable and light.
 - **B4 (§4):** Zoom centred on the cursor, and a clear "Reset to fit" action.
@@ -484,7 +484,7 @@ The plan above was written before [PROJECT_BRIEF.md](PROJECT_BRIEF.md) arrived. 
 - **B16 (§2, §9):** Keep a coverage record, e.g. `docs/FORMAT_COVERAGE.md`. It marks each format combination as checked against a reference, checked against hand-made expectations, untested, or unsupported, and lists intentionally unsupported formats.
 - **B17 (§9):** Add a regression test for every decoding bug found. Add this to CLAUDE.md's testing rules.
 - **B18 (§10–11):** Release documentation:
-  - install, run, update, set as the default .tga viewer, and packaging for another PC
+  - install, run, update, set as the default app for .tga files, and packaging for another PC
   - build process, dependencies and licence obligations (including the .NET runtime notices bundled into a self-contained exe)
   - supported Windows versions
   - the brief's final hand-over list
@@ -492,7 +492,7 @@ The plan above was written before [PROJECT_BRIEF.md](PROJECT_BRIEF.md) arrived. 
   - no Administrator rights (`asInvoker` manifest)
   - no network access
   - no telemetry, auto-update or crash upload
-- **B20 (§6, §10):** The optional installer decision belongs in Phase 6. The exe is currently named `TgaViewer.App.exe`. Proposal: rename it to `TgaViewer.exe` before release, because file associations point at the exe.
+- **B20 (§6, §10):** The optional installer decision belongs in Phase 6. The exe is currently named `TGAPeek.App.exe`. Proposal: rename it to `TGAPeek.exe` before release, because file associations point at the exe.
 - **B21 (§7):** How ordinary users can configure limits. Proposal: entries in the B1 settings file, not exposed in the UI.
 - **B22 (§2):** Pixel aspect ratio from the extension area. Proposal: show it as metadata only, keeping texture pixels square.
 - **B23 (§4):** Write the default display policy up for users in the README: no gamma or colour-correction application, alpha rules, scaling.
@@ -514,6 +514,12 @@ Decide A1–A9, with A1 first because it can change the architecture. Then updat
 
 **Update, same day:** the owner approved the runtime-pack download and the Pillow installation. The release build and the Pillow comparison were then completed (§14.3). The decisions that override earlier choices (A2, A3 and A6) were reported to the owner, and no objection was raised.
 
+**Renamed to TGAPeek (2026-10-25, at the owner's request):**
+- **What changed:** the solution, all projects and namespaces, the exe (`TGAPeek.exe`), window and dialog titles, the settings folder (`%LOCALAPPDATA%\TGAPeek`), the tools and the docs.
+- **Settings:** settings saved by earlier builds are not carried over.
+- **Test data:** four reference inputs embed the generator's name, so they were regenerated and Pillow's outputs refreshed. Pillow's pixels were unchanged.
+- **Not renamed:** the brief's own wording, which describes the kind of app, was left as written.
+
 ### 14.1 Decisions on the §13 items
 
 | # | Decision taken |
@@ -529,7 +535,7 @@ Decide A1–A9, with A1 first because it can change the architecture. Then updat
 | A9 | **Checked:** .NET 10's support list includes Windows 10 only in 1607, 1809 and 21H2 "(E)" and 21H2 IoT, not the ordinary 22H2. Documented in the README. |
 
 **B items:**
-- **B1:** window size and position are remembered in `%LOCALAPPDATA%\TgaViewer\settings.json`.
+- **B1:** window size and position are remembered in `%LOCALAPPDATA%\TGAPeek\settings.json`.
 - **B2:** with several command-line files, the first is shown and Left/Right follow the given order.
 - **B3:** single-instance forwarding was investigated and **not implemented**. It needs inter-process messaging, which adds complexity and failure modes, and each launch already opens a predictable window of its own. This is documented.
 - **B4:** zoom around the cursor, and fit with Ctrl+0 or a double-click.
@@ -548,7 +554,7 @@ Decide A1–A9, with A1 first because it can change the architecture. Then updat
 - **B17:** the regression-test rule is in CLAUDE.md.
 - **B18:** README and THIRD-PARTY-NOTICES.
 - **B19:** asInvoker manifest; no network, telemetry or update code.
-- **B20:** the exe is named `TgaViewer.exe` and has an icon. No installer: Windows' own "Open with ▸ Always" sets the default viewer.
+- **B20:** the exe is named `TGAPeek.exe` and has an icon. No installer: Windows' own "Open with ▸ Always" sets the default viewer.
 - **B21:** `MaxDecodeMemoryMB` can be set in the settings file.
 - **B22:** the pixel aspect ratio is shown, not applied.
 - **B23:** the display policy is in the README.
@@ -561,16 +567,16 @@ Decide A1–A9, with A1 first because it can change the architecture. Then updat
 
 ### 14.2 What was built
 
-- **Core** (`src/TgaViewer.Core`):
+- **Core** (`src/TGAPeek.Core`):
   - a streaming decoder for every format in [FORMAT_COVERAGE.md](FORMAT_COVERAGE.md), plus an isolated reader for the TGA 2.0 structures;
   - the memory estimator, alpha policy and display renderer (exact compositing, channel views, hatching for missing and invalid pixels, smooth scaling);
   - view maths, the pixel inspector, the information report, file access and Explorer-style name sorting, and plain-language error text.
-- **App** (`src/TgaViewer.App`, `TgaViewer.exe`):
+- **App** (`src/TGAPeek.App`, `TGAPeek.exe`):
   - menus, a compact toolbar, a status bar, and an information panel with a pixel inspector and postage-stamp preview;
   - the canvas: zoom at the cursor, pan, fit, 100% and double-click, all rendered without GDI+ scaling;
   - opening files: drag and drop (files and folders), the command line, previous/next browsing;
   - remembered settings, a memory check before decoding, background loading (stale results discarded; the old image kept until the new one is ready), error dialogs, an icon and the manifest.
-- **Tests** (`tests/TgaViewer.Core.Tests`): 420 automated tests:
+- **Tests** (`tests/TGAPeek.Core.Tests`): 420 automated tests:
   - hand-written goldens and a format matrix;
   - a comparison with Pillow on 35 reference files (added after approval);
   - TGA 2.0 metadata and corruption cases;
@@ -609,7 +615,8 @@ Decide A1–A9, with A1 first because it can change the architecture. Then updat
   - A deliberately wrong classification makes the test fail.
   - Details are in [tools/reference/README.md](../tools/reference/README.md).
 - **Release build** (`win-x64-self-contained`, after approval):
-  - **File:** `TgaViewer.exe` is 107,241,650 bytes, with SHA-256 `5427F6260A8AD40ADC08B62704DC2AC818B3111EDC750B909B4DEB0E4ED48327`. Zipped with its licence files, it is 44 MB.
+  - **File:** `TGAPeek.exe` is 107,241,628 bytes, with SHA-256 `A08719F06C3CACF3A30D5C604971A07B02A8E01303E0146E411C812931635808` (rebuilt after the rename). Zipped with its licence files, it is 44 MB.
+  - **No local paths:** Release builds map source paths to `/_/` (`PathMap` in `Directory.Build.props`), so the exe records no folder or user name from the PC that built it.
   - **Independence from installed .NET:** while running, it had loaded no module from the installed .NET (the framework-dependent build loads 40), and it extracted nothing to disk.
   - **Start-up** (time until the image is shown; 8 launches each, median of the last 7):
     - self-contained: 216 ms, 18.2 MB private memory;
@@ -623,14 +630,12 @@ Decide A1–A9, with A1 first because it can change the architecture. Then updat
     - 22 MB trimmed.
   - **Trimming:** the SDK refuses it for Windows Forms (`TrimmingWindowsFormsIsNotSupported`). As an experiment it was forced through the internal `_SuppressWinFormsTrimError` switch. The trimmed build never saved its settings, because trimming switches off reflection-based JSON, and it failed two display checks. Trimming is not used.
 - **Smoke test on the release build:**
-  - **Results:** six runs, all while the PC was in use. Every one of the 85 checks passed in at least one run of this exact exe, but no single run passed all 85.
-  - **Skipped keyboard checks:** they were skipped whenever Windows kept another program in front (the logs name VS Code and Chrome).
-  - **Two runs with visual failures:**
-    - These were sample 12 and 16 captures and the 100%/alpha views.
-    - They did not reproduce in 14 isolated captures of the same files, with and without saved settings, which gave identical exact colours every time.
-    - The likely cause is input reaching the viewer windows, for example mouse-wheel scrolling over a window that opened under the pointer.
-  - **Weakest evidence:** the alpha-view keyboard check passed in only one of its three attempts. Its display logic is also covered by the renderer's unit tests.
-  - **Still to do:** a full run while the PC is idle.
+  - **Final result:** after the rename, one run with the PC idle passed all 85 checks.
+  - **Earlier runs, while the PC was in use:**
+    - Keyboard checks were skipped whenever Windows kept another program in front; the logs name VS Code and Chrome.
+    - Two runs had visual failures that did not reproduce in 19 isolated captures of the same files. The likely cause is input reaching the viewer windows, for example mouse-wheel scrolling over a window that opened under the pointer.
+    - One run stopped when a viewer window disappeared before it could be captured.
+  - **Change to the script:** a capture that fails now counts as a failed check instead of stopping the run.
 - **Smoke-test tool fixed:**
   - **The problem:** `SendKeys` types into whichever window is in front, and Windows sometimes keeps another program there. In two runs that day, four view shortcuts (Ctrl+1, Ctrl+3, Ctrl+7, Ctrl+2) most likely reached another program instead of the viewer.
   - **The fix:**

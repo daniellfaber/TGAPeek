@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-  Draws the application icon (src\TgaViewer.App\TgaViewer.ico): red, green and blue quadrants and a
+  Draws the application icon (src\TGAPeek.App\TGAPeek.ico): red, green and blue quadrants and a
   checkerboard quadrant (transparency) on a dark rounded square, at 16-256 pixels.
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File tools/MakeIcon.ps1
 #>
-param([string]$Output = (Join-Path $PSScriptRoot "..\src\TgaViewer.App\TgaViewer.ico"))
+param([string]$Output = (Join-Path $PSScriptRoot "..\src\TGAPeek.App\TGAPeek.ico"))
 
 $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.Drawing

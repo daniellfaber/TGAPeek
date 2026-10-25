@@ -481,10 +481,10 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# --- TGA Viewer project-specific ---
+# --- TGAPeek project-specific ---
 # Local-only TGA files for manual testing (never committed)
 samples/
 # Isolated Python environment used only to generate reference outputs
 tools/reference/.venv/
 # The viewer's publish profiles contain no credentials and are part of the release setup
-!src/TgaViewer.App/Properties/PublishProfiles/*.pubxml
+!src/TGAPeek.App/Properties/PublishProfiles/*.pubxml

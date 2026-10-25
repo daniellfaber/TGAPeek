@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Approved test-only packages. Do not add others without asking. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <!-- Inputs and Pillow's outputs for ReferenceTests (see tools/reference/README.md). -->
+  <ItemGroup>
+    <None Update="Reference\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TGAPeek.Core\TGAPeek.Core.csproj" />
+    <ProjectReference Include="..\TGAPeek.TestSupport\TGAPeek.TestSupport.csproj" />
+  </ItemGroup>
+
+</Project>

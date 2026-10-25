@@ -1,6 +1,6 @@
 # Reference outputs from Pillow
 
-`tests/TgaViewer.Core.Tests/ReferenceTests.cs` compares the viewer's decoder with an independent one, [Pillow](https://python-pillow.org). Pillow's outputs are committed, so the tests run without Python. This folder holds the script that produced them.
+`tests/TGAPeek.Core.Tests/ReferenceTests.cs` compares the viewer's decoder with an independent one, [Pillow](https://python-pillow.org). Pillow's outputs are committed, so the tests run without Python. This folder holds the script that produced them.
 
 ## The isolated environment
 
@@ -17,11 +17,11 @@ The second command downloads one file from PyPI: `pillow-13.0.0-cp311-cp311-win_
 
 ## Regenerating the references
 
-Only needed after changing `TgaReferenceSamples` (in `tests/TgaViewer.TestSupport`):
+Only needed after changing `TgaReferenceSamples` (in `tests/TGAPeek.TestSupport`):
 
 ```
-dotnet run --project tools/TgaViewer.SampleGenerator -- tests/TgaViewer.Core.Tests/Reference/inputs --reference
-tools\reference\.venv\Scripts\python.exe -I tools\reference\make_references.py tests\TgaViewer.Core.Tests\Reference\inputs tests\TgaViewer.Core.Tests\Reference
+dotnet run --project tools/TGAPeek.SampleGenerator -- tests/TGAPeek.Core.Tests/Reference/inputs --reference
+tools\reference\.venv\Scripts\python.exe -I tools\reference\make_references.py tests\TGAPeek.Core.Tests\Reference\inputs tests\TGAPeek.Core.Tests\Reference
 dotnet test -c Release --filter FullyQualifiedName~ReferenceTests
 ```
 

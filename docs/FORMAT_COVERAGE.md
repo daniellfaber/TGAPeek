@@ -11,7 +11,7 @@ This page records which TGA variants Version 1 supports, how each one has been v
 | **E2E** | Seen in the running app: `tools/SmokeTest.ps1` opens the file in the real viewer, captures the window and checks the colours and layout of the test pattern. |
 | **R** | Compared with an independent decoder, Pillow 13.0.0 (`ReferenceTests`), on 35 files with random pixels. Each file has a stated agreement level: exact, colour only, stored 5-bit colour, or excluded where Pillow cannot read the variant or reads it differently ([tools/reference/README.md](../tools/reference/README.md)). "R excluded" below means Pillow could not serve as a reference for that variant. |
 
-Every combination below was decoded without error and matched its expected pixels exactly. All 420 automated tests last passed on 2026-10-25. Against the self-contained release build, every smoke-test check passed in at least one of six runs; see IMPLEMENTATION_PLAN.md §14.3.
+Every combination below was decoded without error and matched its expected pixels exactly. All 420 automated tests last passed on 2026-10-25, and a full smoke-test run passed all 85 checks against the self-contained release build (IMPLEMENTATION_PLAN.md §14.3).
 
 ## Image types
 

@@ -1,4 +1,4 @@
-# TGA Viewer — Project Guide for Claude
+# TGAPeek — Project Guide for Claude
 
 ## Read first — before any implementation change
 1. docs/PROJECT_BRIEF.md: the authoritative product specification (requirements and
@@ -17,26 +17,26 @@ ask the user. The brief wins over the plan; the user's explicit decisions win ov
 3. Broad real-world TGA compatibility.  4. Small, fast, native.
 
 ## Stack & layout
-.NET 10 (SDK pinned in global.json), C#, Windows Forms. Solution TgaViewer.slnx:
-- src/TgaViewer.Core — decoder, DisplayRenderer, AlphaPolicy, ViewMath, inspector/report
+.NET 10 (SDK pinned in global.json), C#, Windows Forms. Solution TGAPeek.slnx:
+- src/TGAPeek.Core — decoder, DisplayRenderer, AlphaPolicy, ViewMath, inspector/report
   text. net10.0. No UI refs. NO packages. Warnings are errors.
-- src/TgaViewer.App — WinForms exe (TgaViewer.exe). net10.0-windows, PerMonitorV2,
+- src/TGAPeek.App — WinForms exe (TGAPeek.exe). net10.0-windows, PerMonitorV2,
   asInvoker manifest. NO packages.
-- tests/TgaViewer.Core.Tests — xUnit; the only project allowed (approved) packages.
-- tests/TgaViewer.TestSupport — test-only TGA writer + sample catalogue. Never shipped.
-- tools/ — TgaViewer.SampleGenerator, SmokeTest.ps1 (real UI), MakeIcon.ps1,
+- tests/TGAPeek.Core.Tests — xUnit; the only project allowed (approved) packages.
+- tests/TGAPeek.TestSupport — test-only TGA writer + sample catalogue. Never shipped.
+- tools/ — TGAPeek.SampleGenerator, SmokeTest.ps1 (real UI), MakeIcon.ps1,
   reference/ (Pillow reference script + README; its .venv is git-ignored).
 v1 scope: viewing and inspection only. NO export/save/edit features.
 
 ## Commands
 - Build / test: dotnet build -c Release; dotnet test -c Release
-- Samples: dotnet run --project tools/TgaViewer.SampleGenerator -- samples/generated
-- Local exe (downloads nothing): dotnet publish src/TgaViewer.App -p:PublishProfile=win-x64-framework-dependent
+- Samples: dotnet run --project tools/TGAPeek.SampleGenerator -- samples/generated
+- Local exe (downloads nothing): dotnet publish src/TGAPeek.App -p:PublishProfile=win-x64-framework-dependent
 - Smoke test (opens windows on the user's desktop; sends keys only while the viewer is in
   front, else SKIPs; restores the settings file; -Exe picks the build):
   powershell -ExecutionPolicy Bypass -File tools/SmokeTest.ps1
 - Release (the shipped build: uncompressed, not trimmed; see plan §14.3 for why):
-  dotnet publish src/TgaViewer.App -p:PublishProfile=win-x64-self-contained
+  dotnet publish src/TGAPeek.App -p:PublishProfile=win-x64-self-contained
   Runtime packs 10.0.13 are in the NuGet cache (approved 2026-10-25). A newer SDK needing
   newer packs means a new download: ask first.
 - To prove a restore downloads nothing, add: --source <empty folder>

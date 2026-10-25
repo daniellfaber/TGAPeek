@@ -1,6 +1,6 @@
 # Decoder choice
 
-**Decision:** TGA Viewer uses its own decoder (`src/TgaViewer.Core`). None of the libraries evaluated below covers the TGA features and error handling the [project brief](PROJECT_BRIEF.md) requires (§1–3, §8), and adopting one would also add a dependency. The brief says to use a maintained library if one is good enough, and otherwise to write a dedicated decoder with comprehensive tests (§1). This page records why the second option applies.
+**Decision:** TGAPeek uses its own decoder (`src/TGAPeek.Core`). None of the libraries evaluated below covers the TGA features and error handling the [project brief](PROJECT_BRIEF.md) requires (§1–3, §8), and adopting one would also add a dependency. The brief says to use a maintained library if one is good enough, and otherwise to write a dedicated decoder with comprehensive tests (§1). This page records why the second option applies.
 
 Evaluated on 2026-10-25 by reading each project's source code or documentation online. Nothing was downloaded or installed.
 

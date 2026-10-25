@@ -1,4 +1,4 @@
-# TGA Viewer
+# TGAPeek
 
 A lightweight, native Windows viewer for TGA (Truevision Targa) images, made for inspecting game and 3D textures. It shows pixel and alpha values exactly as stored, opens a wide range of TGA variants, and explains clearly when a file is damaged or unsupported. It never changes, re-saves or uploads anything.
 
@@ -6,11 +6,11 @@ A lightweight, native Windows viewer for TGA (Truevision Targa) images, made for
 
 ## Running it
 
-- **The release build:** `artifacts\publish\win-x64-self-contained\TgaViewer.exe`. It carries everything it needs, including .NET, so it runs on any 64-bit Windows 10 or 11 PC. A smaller development build that uses the installed .NET 10 is in `artifacts\publish\win-x64-framework-dependent\`.
+- **The release build:** `artifacts\publish\win-x64-self-contained\TGAPeek.exe`. It carries everything it needs, including .NET, so it runs on any 64-bit Windows 10 or 11 PC. A smaller development build that uses the installed .NET 10 is in `artifacts\publish\win-x64-framework-dependent\`.
 - **From the command line:**
   ```
-  TgaViewer.exe "C:\textures\brick wall.tga"
-  TgaViewer.exe first.tga second.tga third.tga
+  TGAPeek.exe "C:\textures\brick wall.tga"
+  TGAPeek.exe first.tga second.tga third.tga
   ```
   With several files, the first one opens and Left/Right step through the files in the order given. With one file, Left/Right step through the TGA files in its folder, in Explorer-style name order. Every launch opens its own window.
 - **Other ways to open files:** Ctrl+O, dragging files (or a folder) onto the window, or Explorer's "Open with".
@@ -46,7 +46,7 @@ The **information panel** (F9) shows:
 - all warnings;
 - a detailed pixel inspector: stored values, 5-bit values for 16-bit pixels, palette indices, and normalised 0–1 values.
 
-The window size and position, scaling, background and panel width are remembered in `%LOCALAPPDATA%\TgaViewer\settings.json`.
+The window size and position, scaling, background and panel width are remembered in `%LOCALAPPDATA%\TGAPeek\settings.json`.
 
 ## How images are displayed (default display policy)
 
@@ -89,22 +89,22 @@ The window size and position, scaling, background and panel width are remembered
 
 Each is reported with a clear message. [docs/FORMAT_COVERAGE.md](docs/FORMAT_COVERAGE.md) lists exactly what has been tested and how.
 
-## Setting TGA Viewer as the default for .tga files
+## Setting TGAPeek as the default for .tga files
 
 Windows does this itself; the viewer never changes file associations on its own.
 
-1. Put `TgaViewer.exe` somewhere permanent, for example `%LOCALAPPDATA%\Programs\TGA Viewer\`. If you move it later, repeat these steps.
+1. Put `TGAPeek.exe` somewhere permanent, for example `%LOCALAPPDATA%\Programs\TGAPeek\`. If you move it later, repeat these steps.
 2. Right-click any `.tga` file and choose **Open with ▸ Choose another app**.
-3. Choose **Choose an app on your PC** (Windows 11) or **More apps ▸ Look for another app on this PC** (Windows 10), and select `TgaViewer.exe`.
-4. Select **TGA Viewer**, then click **Always** (Windows 11), or tick **Always use this app to open .tga files** and click OK (Windows 10).
+3. Choose **Choose an app on your PC** (Windows 11) or **More apps ▸ Look for another app on this PC** (Windows 10), and select `TGAPeek.exe`.
+4. Select **TGAPeek**, then click **Always** (Windows 11), or tick **Always use this app to open .tga files** and click OK (Windows 10).
 
-You can also set it later in **Settings ▸ Apps ▸ Default apps**: search for `.tga` and choose TGA Viewer.
+You can also set it later in **Settings ▸ Apps ▸ Default apps**: search for `.tga` and choose TGAPeek.
 
 ## Installing, updating and removing
 
-- **Install:** copy `TgaViewer.exe` (the self-contained release build) into a folder of your choice. No installer and no Administrator rights are needed. When giving it to someone else, include the `licenses` folder and `THIRD-PARTY-NOTICES.md` from the same release folder, because the .NET licences require their notices to go with it.
-- **Update:** close the viewer and replace `TgaViewer.exe` with the new version at the same path. The file association keeps working.
-- **Remove:** delete `TgaViewer.exe` and the `%LOCALAPPDATA%\TgaViewer` folder, and choose another default app for `.tga` if you set one.
+- **Install:** copy `TGAPeek.exe` (the self-contained release build) into a folder of your choice. No installer and no Administrator rights are needed. When giving it to someone else, include the `licenses` folder and `THIRD-PARTY-NOTICES.md` from the same release folder, because the .NET licences require their notices to go with it.
+- **Update:** close the viewer and replace `TGAPeek.exe` with the new version at the same path. The file association keeps working.
+- **Remove:** delete `TGAPeek.exe` and the `%LOCALAPPDATA%\TGAPeek` folder, and choose another default app for `.tga` if you set one.
 
 ## Memory
 
@@ -127,7 +127,7 @@ You can also set it later in **Settings ▸ Apps ▸ Default apps**: search for 
 
 ## Supported Windows versions
 
-TGA Viewer targets 64-bit Windows 10 and 11 on .NET 10, as far as [.NET 10's supported operating systems](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md) allow:
+TGAPeek targets 64-bit Windows 10 and 11 on .NET 10, as far as [.NET 10's supported operating systems](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md) allow:
 - **Windows 11:** current versions are supported.
 - **Windows 10:** Microsoft's list includes it only in versions 1607, 1809 and 21H2 marked "(E)", plus 21H2 IoT. The ordinary Windows 10 22H2 (Home and Pro) is not on that list. The viewer will very likely run there, but that is not officially supported and hasn't been tested.
 
@@ -138,36 +138,36 @@ Requires the .NET SDK 10.0.402 or a later 10.0 feature band (pinned in `global.j
 ```
 dotnet build -c Release
 dotnet test -c Release
-dotnet run --project src/TgaViewer.App -- "path\to\file.tga"
+dotnet run --project src/TGAPeek.App -- "path\to\file.tga"
 ```
 
 Development tools:
 ```
-dotnet run --project tools/TgaViewer.SampleGenerator -- samples/generated          # sample files (add --large for 8192 × 8192)
-dotnet publish src/TgaViewer.App -p:PublishProfile=win-x64-framework-dependent    # small build using the installed .NET
+dotnet run --project tools/TGAPeek.SampleGenerator -- samples/generated          # sample files (add --large for 8192 × 8192)
+dotnet publish src/TGAPeek.App -p:PublishProfile=win-x64-framework-dependent    # small build using the installed .NET
 powershell -ExecutionPolicy Bypass -File tools/SmokeTest.ps1                         # end-to-end check (opens viewer windows; -Exe picks the build)
 powershell -ExecutionPolicy Bypass -File tools/MakeIcon.ps1                          # redraws the application icon
 ```
 
 | Path | Purpose |
 |---|---|
-| `src/TgaViewer.Core` | TGA decoder, display renderer, alpha policy, inspector. No UI code, no dependencies. |
-| `src/TgaViewer.App` | Windows Forms viewer (`TgaViewer.exe`). No dependencies. |
-| `tests/TgaViewer.Core.Tests` | 420 automated tests (xUnit), including a comparison with the independent decoder Pillow. |
-| `tests/TgaViewer.TestSupport` | Test-only TGA writer and sample catalogues. |
+| `src/TGAPeek.Core` | TGA decoder, display renderer, alpha policy, inspector. No UI code, no dependencies. |
+| `src/TGAPeek.App` | Windows Forms viewer (`TGAPeek.exe`). No dependencies. |
+| `tests/TGAPeek.Core.Tests` | 420 automated tests (xUnit), including a comparison with the independent decoder Pillow. |
+| `tests/TGAPeek.TestSupport` | Test-only TGA writer and sample catalogues. |
 | `tools/` | Sample generator, smoke test, icon script, and the Pillow reference script ([tools/reference/README.md](tools/reference/README.md)). |
 | `docs/` | [Project brief](docs/PROJECT_BRIEF.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), [format coverage](docs/FORMAT_COVERAGE.md), [decoder evaluation](docs/DECODER_EVALUATION.md). |
 
 ## Building a release
 
-The distribution build is a single self-contained `TgaViewer.exe` for 64-bit Windows, which needs no .NET installation:
+The distribution build is a single self-contained `TGAPeek.exe` for 64-bit Windows, which needs no .NET installation:
 
 ```
-dotnet publish src/TgaViewer.App -p:PublishProfile=win-x64-self-contained
+dotnet publish src/TGAPeek.App -p:PublishProfile=win-x64-self-contained
 ```
 
 The output goes to `artifacts\publish\win-x64-self-contained\`:
-- `TgaViewer.exe` (107 MB);
+- `TGAPeek.exe` (107 MB);
 - `THIRD-PARTY-NOTICES.md`;
 - a `licenses` folder holding the .NET runtime's licences and notices, copied from the runtime packs at publish time.
 
@@ -182,4 +182,4 @@ Zipped for sharing, the folder is 44 MB. These figures were measured on this PC 
 
 ## Licences
 
-TGA Viewer's own licence hasn't been chosen yet. Third-party components are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+TGAPeek's own licence hasn't been chosen yet. Third-party components are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

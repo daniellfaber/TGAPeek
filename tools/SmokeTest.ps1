@@ -5,8 +5,8 @@
   right place (orientation, channel order and unscaled drawing).
 
 .EXAMPLE
-  dotnet run --project tools/TgaViewer.SampleGenerator -- samples/generated
-  powershell -ExecutionPolicy Bypass -File tools/SmokeTest.ps1 -Exe artifacts\publish\win-x64-framework-dependent\TgaViewer.exe
+  dotnet run --project tools/TGAPeek.SampleGenerator -- samples/generated
+  powershell -ExecutionPolicy Bypass -File tools/SmokeTest.ps1 -Exe artifacts\publish\win-x64-framework-dependent\TGAPeek.exe
 
   The viewer's settings file is backed up first and restored afterwards.
   Viewer windows open and close on the desktop while it runs. Keyboard checks send keys only while the
@@ -17,7 +17,7 @@
   capture behind any failed visual check.
 #>
 param(
-    [string]$Exe = (Join-Path $PSScriptRoot "..\artifacts\publish\win-x64-framework-dependent\TgaViewer.exe"),
+    [string]$Exe = (Join-Path $PSScriptRoot "..\artifacts\publish\win-x64-framework-dependent\TGAPeek.exe"),
     [string]$Samples = (Join-Path $PSScriptRoot "..\samples\generated"),
     # When set, the window capture behind each failed visual check is saved here as a PNG.
     [string]$CaptureFolder = ""
@@ -78,11 +78,12 @@ public static class WindowProbe
         return titles.ToArray();
     }
 
+    /// <summary>The window's pixels, or null if the window no longer exists or has no area.</summary>
     public static Bitmap Capture(IntPtr hwnd)
     {
         SetThreadDpiAwarenessContext(new IntPtr(-4)); // per-monitor aware: real pixel sizes
         Rect r;
-        GetWindowRect(hwnd, out r);
+        if (hwnd == IntPtr.Zero || !GetWindowRect(hwnd, out r) || r.Right <= r.Left || r.Bottom <= r.Top) return null;
         var bitmap = new Bitmap(r.Right - r.Left, r.Bottom - r.Top, PixelFormat.Format32bppArgb);
         using (var g = Graphics.FromImage(bitmap))
         {
@@ -139,7 +140,7 @@ function WaitFor([scriptblock]$condition) {
     return $false
 }
 
-$settings = Join-Path $env:LOCALAPPDATA "TgaViewer\settings.json"
+$settings = Join-Path $env:LOCALAPPDATA "TGAPeek\settings.json"
 $settingsFolder = Split-Path $settings
 $hadSettingsFolder = Test-Path $settingsFolder
 $backup = $null
@@ -154,7 +155,7 @@ function Start-Viewer([string[]]$paths) {
         Start-Sleep -Milliseconds 250
         $p.Refresh()
         $titles = [WindowProbe]::WindowTitles($p.Id)
-        if ($titles.Count -gt 0 -and ($titles -match "TGA Viewer").Count -gt 0) { break }
+        if ($titles.Count -gt 0 -and ($titles -match "TGAPeek").Count -gt 0) { break }
     }
     Start-Sleep -Milliseconds 1200 # let decoding and the first paint finish
     return $p
@@ -177,14 +178,17 @@ try {
             $bitmap = $null
             $found = WaitFor {
                 if ($null -ne $bitmap) { $bitmap.Dispose() }
+                $p.Refresh()
                 $script:bitmap = [WindowProbe]::Capture($p.MainWindowHandle)
+                if ($null -eq $bitmap) { $script:red = @(); return $false }
                 $w = $bitmap.Width; $h = $bitmap.Height
                 $script:red = [WindowProbe]::Find($bitmap, 0xFF0000, 0, 0, $w, $h)
                 $script:green = [WindowProbe]::Find($bitmap, 0x00FF00, 0, 0, $w, $h)
                 $script:blue = [WindowProbe]::Find($bitmap, 0x0000FF, 0, 0, $w, $h)
                 $red.Count -gt 0 -and $green.Count -gt 0 -and $blue.Count -gt 0
             }
-            Check $found "exact red, green and blue pixels are on screen"
+            $note = if ($null -eq $bitmap) { " (the viewer window could not be captured; still running: $(-not $p.HasExited))" } else { "" }
+            Check $found "exact red, green and blue pixels are on screen$note"
             if (-not $found) { Save-Capture $bitmap "$name colours" }
             if ($red.Count -gt 0 -and $green.Count -gt 0 -and $blue.Count -gt 0) {
                 Check ($green[0] -gt $red[2]) "green quadrant is to the right of red"
@@ -197,7 +201,7 @@ try {
                 $redArea = ($red[2] - $red[0] + 1) * ($red[3] - $red[1] + 1)
                 Check (($red[4] + $black[4]) -eq $redArea) "red quadrant contains only exact red and the black marker"
             }
-            $bitmap.Dispose()
+            if ($null -ne $bitmap) { $bitmap.Dispose() }
         } finally { Stop-Viewer $p }
     }
 
@@ -242,7 +246,9 @@ try {
         return $true
     }
     function Count([int]$rgb) {
+        $p.Refresh()
         $bitmap = [WindowProbe]::Capture($p.MainWindowHandle)
+        if ($null -eq $bitmap) { return -1 }
         $found = [WindowProbe]::Find($bitmap, $rgb, 0, 0, $bitmap.Width, $bitmap.Height)
         $bitmap.Dispose()
         if ($found.Count -eq 0) { return 0 } else { return $found[4] }
@@ -276,7 +282,7 @@ try {
     try {
         $message = "no unexpected error after panel, scaling, zoom and background commands"
         if (Keys "{F9}", "^+s", "{ADD}", "{ADD}", "{SUBTRACT}", "^0", "^+n", "^b", "^b", "{F9}") {
-            Check (-not ([WindowProbe]::WindowTitles($p.Id) -contains "TGA Viewer error")) $message
+            Check (-not ([WindowProbe]::WindowTitles($p.Id) -contains "TGAPeek error")) $message
         } else { Skip $message }
         $message = "Right arrow opens the next file in the folder"
         if (Keys "{RIGHT}") { Check (WaitFor { ([WindowProbe]::WindowTitles($p.Id) -like "$(Sample "22")*").Count -gt 0 }) $message } else { Skip $message }

@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Windows Forms viewer. No NuGet packages. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- 1:1 zoom must map one image pixel to one physical screen pixel. -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>TGAPeek</AssemblyName>
+    <RootNamespace>TGAPeek.App</RootNamespace>
+    <!-- AssemblyTitle becomes the file description Windows shows in "Open with". -->
+    <AssemblyTitle>TGAPeek</AssemblyTitle>
+    <Product>TGAPeek</Product>
+    <Description>Lightweight viewer for TGA (Truevision Targa) images.</Description>
+    <Version>1.0.0</Version>
+    <!-- Drawn by tools/MakeIcon.ps1. -->
+    <ApplicationIcon>TGAPeek.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TGAPeek.Core\TGAPeek.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    A self-contained build bundles the .NET runtime, whose licences require their notices to travel
+    with the exe. Copy them from the runtime packs used for this publish, and fail if any is missing.
+  -->
+  <Target Name="PublishRuntimeNotices" AfterTargets="Publish" Condition="'$(SelfContained)' == 'true'">
+    <ItemGroup>
+      <!-- The exe bundles these two runtimes. The SDK also downloads ASP.NET Core's pack, which is not used. -->
+      <_BundledRuntimePack Include="@(ResolvedRuntimePack)" Condition="'%(FrameworkName)' == 'Microsoft.NETCore.App' or '%(FrameworkName)' == 'Microsoft.WindowsDesktop.App'" />
+      <_RuntimeNotice Include="%(_BundledRuntimePack.PackageDirectory)\LICENSE*;%(_BundledRuntimePack.PackageDirectory)\THIRD-PARTY-NOTICES*" Pack="%(_BundledRuntimePack.NuGetPackageId)" />
+    </ItemGroup>
+    <Error Condition="'@(_BundledRuntimePack->Count())' != '2'" Text="Expected the .NET and Windows Desktop runtime packs, found: @(_BundledRuntimePack->'%(NuGetPackageId)')." />
+    <Error Condition="!Exists('%(_BundledRuntimePack.PackageDirectory)\LICENSE') and !Exists('%(_BundledRuntimePack.PackageDirectory)\LICENSE.TXT')" Text="No licence file in %(_BundledRuntimePack.PackageDirectory)." />
+    <Copy SourceFiles="@(_RuntimeNotice)" DestinationFiles="@(_RuntimeNotice->'$(PublishDir)licenses\%(Pack)\%(Filename).txt')" />
+    <Copy SourceFiles="..\..\THIRD-PARTY-NOTICES.md" DestinationFolder="$(PublishDir)" />
+  </Target>
+
+</Project>

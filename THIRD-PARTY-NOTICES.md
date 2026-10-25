@@ -1,6 +1,6 @@
 # Third-party notices
 
-## Shipped with TGA Viewer
+## Shipped with TGAPeek
 
 The viewer's own code uses no third-party libraries. The **self-contained release build** bundles the .NET runtime, including Windows Forms, which Microsoft and the .NET Foundation publish under the MIT licence:
 
@@ -18,7 +18,7 @@ The .NET runtime also contains components under other permissive licences. The p
 - `licenses\Microsoft.NETCore.App.Runtime.win-x64\`: `LICENSE.txt` and `THIRD-PARTY-NOTICES.txt`;
 - `licenses\Microsoft.WindowsDesktop.App.Runtime.win-x64\`: `LICENSE.txt` (this pack has no separate notices file).
 
-Keep that folder, and this file, with `TgaViewer.exe` when giving it to anyone else.
+Keep that folder, and this file, with `TGAPeek.exe` when giving it to anyone else.
 
 ## Used only for development (not shipped)
 

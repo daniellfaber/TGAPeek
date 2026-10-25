@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TGAPeek.App/TGAPeek.App.csproj" />
+    <Project Path="src/TGAPeek.Core/TGAPeek.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TGAPeek.Core.Tests/TGAPeek.Core.Tests.csproj" />
+    <Project Path="tests/TGAPeek.TestSupport/TGAPeek.TestSupport.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/TGAPeek.SampleGenerator/TGAPeek.SampleGenerator.csproj" />
+  </Folder>
+</Solution>

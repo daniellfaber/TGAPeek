@@ -1,5 +1,5 @@
 <!--
-  docs/PROJECT_BRIEF.md: the authoritative product specification for the TGA Viewer.
+  docs/PROJECT_BRIEF.md: the authoritative product specification for TGAPeek.
   Do not change the text between the BEGIN and END markers without the project
   owner's explicit approval.
 -->
