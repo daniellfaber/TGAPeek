@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Deterministic>true</Deterministic>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <!-- Shown in each file's Properties ▸ Details; the licence is in LICENSE at the repository root. -->
+    <Authors>Daniel Faber</Authors>
+    <Copyright>Copyright (c) 2026 Daniel Faber</Copyright>
     <!-- Release binaries record source paths relative to the repository (/_/), not this PC's folders. -->
     <PathMap Condition="'$(Configuration)' == 'Release'">$(MSBuildThisFileDirectory)=/_/</PathMap>
   </PropertyGroup>

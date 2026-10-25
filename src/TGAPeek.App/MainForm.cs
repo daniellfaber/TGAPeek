@@ -969,6 +969,7 @@ internal sealed class MainForm : Form
             this,
             $"""
             TGAPeek {version}
+            Copyright (c) 2026 Daniel Faber. Released under the MIT License.
 
             A lightweight viewer for TGA (Truevision Targa) images, for inspecting textures.
             It never changes or saves image files, never uses the network, and collects no data.

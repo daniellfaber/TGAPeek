@@ -23,6 +23,11 @@
     <ProjectReference Include="..\TGAPeek.Core\TGAPeek.Core.csproj" />
   </ItemGroup>
 
+  <!-- The MIT licence travels beside every published exe (not inside the single file). -->
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Link="LICENSE.txt" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" Visible="false" />
+  </ItemGroup>
+
   <!--
     A self-contained build bundles the .NET runtime, whose licences require their notices to travel
     with the exe. Copy them from the runtime packs used for this publish, and fail if any is missing.

@@ -102,7 +102,7 @@ You can also set it later in **Settings ▸ Apps ▸ Default apps**: search for 
 
 ## Installing, updating and removing
 
-- **Install:** copy `TGAPeek.exe` (the self-contained release build) into a folder of your choice. No installer and no Administrator rights are needed. When giving it to someone else, include the `licenses` folder and `THIRD-PARTY-NOTICES.md` from the same release folder, because the .NET licences require their notices to go with it.
+- **Install:** copy `TGAPeek.exe` (the self-contained release build) into a folder of your choice. No installer and no Administrator rights are needed. When giving it to someone else, include `LICENSE.txt`, `THIRD-PARTY-NOTICES.md` and the `licenses` folder from the same release folder. The MIT licence and the .NET licences require their notices to go with it.
 - **Update:** close the viewer and replace `TGAPeek.exe` with the new version at the same path. The file association keeps working.
 - **Remove:** delete `TGAPeek.exe` and the `%LOCALAPPDATA%\TGAPeek` folder, and choose another default app for `.tga` if you set one.
 
@@ -168,6 +168,7 @@ dotnet publish src/TGAPeek.App -p:PublishProfile=win-x64-self-contained
 
 The output goes to `artifacts\publish\win-x64-self-contained\`:
 - `TGAPeek.exe` (107 MB);
+- `LICENSE.txt`, TGAPeek's own MIT licence;
 - `THIRD-PARTY-NOTICES.md`;
 - a `licenses` folder holding the .NET runtime's licences and notices, copied from the runtime packs at publish time.
 
@@ -182,4 +183,4 @@ Zipped for sharing, the folder is 44 MB. These figures were measured on this PC 
 
 ## Licences
 
-TGAPeek's own licence hasn't been chosen yet. Third-party components are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+TGAPeek is released under the [MIT License](LICENSE), copyright (c) 2026 Daniel Faber: anyone may use, copy, modify and distribute it, provided the copyright and licence notice are kept. Third-party components are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
