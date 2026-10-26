@@ -48,7 +48,7 @@ internal sealed class ImageCanvas : Control
         TabStop = true;
         AccessibleName = "Image view";
         AccessibleRole = AccessibleRole.Graphic;
-        BackColor = Color.FromArgb(0x2B, 0x2B, 0x2B);
+        BackColor = Theme.Canvas;
         _settleTimer.Tick += (_, _) =>
         {
             // Smooth scaling is skipped while zooming or panning, then applied once things settle.
@@ -163,9 +163,13 @@ internal sealed class ImageCanvas : Control
         int height = ClientSize.Height;
         if (_image is null || width <= 0 || height <= 0)
         {
+            // Empty state: a large faint picture icon above the hint.
             g.Clear(BackColor);
-            TextRenderer.DrawText(g, Placeholder, Font, ClientRectangle, Color.Gainsboro, BackColor,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+            int icon = LogicalToDeviceUnits(64);
+            int gap = LogicalToDeviceUnits(12);
+            Theme.DrawGlyph(g, Theme.GlyphImage, new Rectangle((width - icon) / 2, height / 2 - icon - gap / 2, icon, icon), icon * 0.85F, Theme.TextFaint);
+            TextRenderer.DrawText(g, Placeholder, Theme.PlaceholderFont, new Rectangle(0, height / 2 + gap / 2, width, height / 2 - gap), Theme.TextMuted,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.Top | TextFormatFlags.WordBreak);
             return;
         }
 
@@ -379,20 +383,50 @@ internal sealed class ImageCanvas : Control
     {
         if (!string.IsNullOrEmpty(_banner))
         {
-            var size = TextRenderer.MeasureText(g, _banner, Font, new Size(ClientSize.Width - 16, int.MaxValue), TextFormatFlags.WordBreak);
-            var area = new Rectangle(0, 0, ClientSize.Width, size.Height + 10);
-            using var brush = new SolidBrush(Color.FromArgb(210, 32, 32, 32));
-            g.FillRectangle(brush, area);
-            TextRenderer.DrawText(g, _banner, Font, area, Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+            // A warning strip across the top: amber edge and icon, then the message.
+            int pad = LogicalToDeviceUnits(10);
+            int icon = LogicalToDeviceUnits(16);
+            int textLeft = pad * 2 + icon;
+            var size = TextRenderer.MeasureText(g, _banner, Font, new Size(Math.Max(1, ClientSize.Width - textLeft - pad), int.MaxValue), TextFormatFlags.WordBreak);
+            var area = new Rectangle(0, 0, ClientSize.Width, size.Height + pad * 2);
+            using (var brush = new SolidBrush(Color.FromArgb(238, Theme.Chrome)))
+            {
+                g.FillRectangle(brush, area);
+            }
+
+            using (var edge = new SolidBrush(Theme.Warning))
+            {
+                g.FillRectangle(edge, 0, 0, LogicalToDeviceUnits(3), area.Height);
+            }
+
+            using (var line = new Pen(Theme.Border))
+            {
+                g.DrawLine(line, 0, area.Bottom - 1, area.Right, area.Bottom - 1);
+            }
+
+            Theme.DrawGlyph(g, Theme.GlyphWarning, new Rectangle(pad + LogicalToDeviceUnits(2), pad, icon, Math.Min(icon + 2, area.Height - pad)), icon * 0.9F, Theme.Warning);
+            TextRenderer.DrawText(g, _banner, Font, Rectangle.FromLTRB(textLeft, pad, area.Right - pad, area.Bottom - pad), Theme.Text,
+                TextFormatFlags.Left | TextFormatFlags.Top | TextFormatFlags.WordBreak);
         }
 
         if (!string.IsNullOrEmpty(_overlay))
         {
+            // A message card in the middle of the view.
             var size = TextRenderer.MeasureText(g, _overlay, Font);
-            var area = new Rectangle((ClientSize.Width - size.Width) / 2 - 16, (ClientSize.Height - size.Height) / 2 - 10, size.Width + 32, size.Height + 20);
-            using var brush = new SolidBrush(Color.FromArgb(220, 32, 32, 32));
-            g.FillRectangle(brush, area);
-            TextRenderer.DrawText(g, _overlay, Font, area, Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            int padX = LogicalToDeviceUnits(20);
+            int padY = LogicalToDeviceUnits(14);
+            var area = new Rectangle((ClientSize.Width - size.Width) / 2 - padX, (ClientSize.Height - size.Height) / 2 - padY, size.Width + padX * 2, size.Height + padY * 2);
+            Theme.FillRounded(g, area, LogicalToDeviceUnits(6), Color.FromArgb(242, Theme.Control));
+            using (var path = Theme.Rounded(area, LogicalToDeviceUnits(6)))
+            using (var pen = new Pen(Theme.Border))
+            {
+                var smoothing = g.SmoothingMode;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.DrawPath(pen, path);
+                g.SmoothingMode = smoothing;
+            }
+
+            TextRenderer.DrawText(g, _overlay, Font, area, Theme.Text, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
         }
     }
 }

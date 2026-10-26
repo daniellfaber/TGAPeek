@@ -520,6 +520,8 @@ Decide A1–A9, with A1 first because it can change the architecture. Then updat
 - **Test data:** four reference inputs embed the generator's name, so they were regenerated and Pillow's outputs refreshed. Pillow's pixels were unchanged.
 - **Not renamed:** the brief's own wording, which describes the kind of app, was left as written.
 
+**Visual redesign (2026-10-26, at the owner's request):** a dark-only interface with colour-coded channel controls and inspector values. It is visual only; behaviour is unchanged (420 tests and all 85 end-to-end checks pass). The design system, the screenshots and the owner's design feedback are in [DESIGN.md](DESIGN.md).
+
 ### 14.1 Decisions on the §13 items
 
 | # | Decision taken |

@@ -2,6 +2,10 @@
 
 A lightweight, native Windows viewer for TGA (Truevision Targa) images, made for inspecting game and 3D textures. It shows pixel and alpha values exactly as stored, opens a wide range of TGA variants, and explains clearly when a file is damaged or unsupported. It never changes, re-saves or uploads anything.
 
+![TGAPeek showing a texture with the pixel inspector open](docs/design/screenshots/after-rgba-inspector.png)
+
+The interface is dark only, with colour-coded channel controls; its design system is in [docs/DESIGN.md](docs/DESIGN.md).
+
 **Status:** Version 1 is complete, including the self-contained release build, which needs no .NET installation. See [Building a release](#building-a-release).
 
 ## Running it
@@ -53,7 +57,7 @@ The window size and position, scaling, background and panel width are remembered
 - **No colour changes:** pixel values are shown as stored. There is no colour management, gamma correction, sRGB conversion, sharpening or "enhancement". The TGA 2.0 gamma value and colour-correction table are shown in the information panel but never applied.
 - **Pixel inspector:** values always come from the decoded file, never from the screen.
 - **Scaling:** nearest-neighbour by default (crisp pixels for inspection); smooth scaling is available. At 100% zoom, one image pixel is one physical screen pixel. The viewer is per-monitor DPI aware, so this should also hold with Windows display scaling. So far it has only been tested at 100% display scaling.
-- **Transparency** is drawn over a checkerboard by default, so transparent pixels can't be confused with black ones. A solid background colour can be chosen instead.
+- **Transparency** is drawn over a dark grey checkerboard by default, so transparent pixels can't be confused with black ones. A solid background colour can be chosen instead.
 - **Alpha, Auto mode:** decided from what the file declares, never just from its pixel size:
   1. If the file has a TGA 2.0 attributes type, it is followed:
      - 0, 1 and 2 (no alpha, or undefined alpha): shown opaque, with the data kept and visible in the Alpha view;
@@ -147,6 +151,7 @@ dotnet run --project tools/TGAPeek.SampleGenerator -- samples/generated         
 dotnet publish src/TGAPeek.App -p:PublishProfile=win-x64-framework-dependent    # small build using the installed .NET
 powershell -ExecutionPolicy Bypass -File tools/SmokeTest.ps1                         # end-to-end check (opens viewer windows; -Exe picks the build)
 powershell -ExecutionPolicy Bypass -File tools/MakeIcon.ps1                          # redraws the application icon
+powershell -ExecutionPolicy Bypass -File tools/CaptureScreenshots.ps1 -Prefix after  # design screenshots (docs/design/screenshots)
 ```
 
 | Path | Purpose |
@@ -155,8 +160,8 @@ powershell -ExecutionPolicy Bypass -File tools/MakeIcon.ps1                     
 | `src/TGAPeek.App` | Windows Forms viewer (`TGAPeek.exe`). No dependencies. |
 | `tests/TGAPeek.Core.Tests` | 420 automated tests (xUnit), including a comparison with the independent decoder Pillow. |
 | `tests/TGAPeek.TestSupport` | Test-only TGA writer and sample catalogues. |
-| `tools/` | Sample generator, smoke test, icon script, and the Pillow reference script ([tools/reference/README.md](tools/reference/README.md)). |
-| `docs/` | [Project brief](docs/PROJECT_BRIEF.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), [format coverage](docs/FORMAT_COVERAGE.md), [decoder evaluation](docs/DECODER_EVALUATION.md). |
+| `tools/` | Sample generator, smoke test, screenshot capture, icon script, and the Pillow reference script ([tools/reference/README.md](tools/reference/README.md)). |
+| `docs/` | [Project brief](docs/PROJECT_BRIEF.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), [design system](docs/DESIGN.md), [format coverage](docs/FORMAT_COVERAGE.md), [decoder evaluation](docs/DECODER_EVALUATION.md). |
 
 ## Building a release
 

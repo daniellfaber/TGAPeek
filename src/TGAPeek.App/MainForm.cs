@@ -23,9 +23,10 @@ internal sealed class MainForm : Form
     private readonly ToolStripStatusLabel _statusWarnings = new() { IsLink = true };
     private readonly Panel _infoPanel = new() { Dock = DockStyle.Right };
     private readonly Splitter _splitter = new() { Dock = DockStyle.Right };
-    private readonly TextBox _inspectorText = ReadOnlyText("Pixel inspector");
-    private readonly TextBox _infoText = ReadOnlyText("Image information");
-    private readonly PictureBox _stampBox = new() { Dock = DockStyle.Top, SizeMode = PictureBoxSizeMode.CenterImage, Height = 0 };
+    private readonly RichTextBox _inspectorText = StyledText.Create("Pixel inspector");
+    private readonly RichTextBox _infoText = StyledText.Create("Image information");
+    private readonly PictureBox _stampBox = new() { Dock = DockStyle.Top, SizeMode = PictureBoxSizeMode.CenterImage, Height = 0, BackColor = Theme.Panel };
+    private readonly List<(ToolStripItem Item, char Glyph)> _icons = [];
     private readonly Dictionary<ChannelView, ToolStripMenuItem> _channelMenu = [];
     private readonly Dictionary<ChannelView, ToolStripButton> _channelButtons = [];
     private readonly Dictionary<AlphaMode, ToolStripMenuItem> _alphaMenu = [];
@@ -61,7 +62,17 @@ internal sealed class MainForm : Form
             Scaling = settings.Scaling == nameof(ScalingMode.Smooth) ? ScalingMode.Smooth : ScalingMode.Nearest,
             Checkerboard = settings.Checkerboard,
             SolidBackground = ParseColor(settings.BackgroundColor),
+            CheckerLight = Theme.CheckerLight,
+            CheckerDark = Theme.CheckerDark,
         };
+
+        var renderer = new DarkRenderer();
+        ToolStripManager.Renderer = renderer;
+        _menu.Renderer = renderer;
+        _toolbar.Renderer = renderer;
+        _status.Renderer = renderer;
+        BackColor = Theme.Chrome;
+        ForeColor = Theme.Text;
 
         Text = AppName;
         AutoScaleMode = AutoScaleMode.Dpi;
@@ -104,6 +115,18 @@ internal sealed class MainForm : Form
         StartPosition = FormStartPosition.WindowsDefaultLocation;
         ShowInfoPanel(settings.InfoPanelVisible);
         UpdateAll();
+    }
+
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        base.OnHandleCreated(e);
+        Theme.ApplyDarkFrame(Handle);
+    }
+
+    protected override void OnDpiChanged(DpiChangedEventArgs e)
+    {
+        base.OnDpiChanged(e);
+        RefreshIcons();
     }
 
     protected override void OnLoad(EventArgs e)
@@ -267,6 +290,12 @@ internal sealed class MainForm : Form
         });
 
         _menu.Items.AddRange(new ToolStripItem[] { file, view, help });
+        _menu.Padding = new Padding(LogicalToDeviceUnits(6), LogicalToDeviceUnits(3), 0, LogicalToDeviceUnits(3));
+        _menu.AccessibleName = "Menu";
+        foreach (ToolStripItem item in _menu.Items)
+        {
+            item.Padding = new Padding(LogicalToDeviceUnits(6), LogicalToDeviceUnits(2), LogicalToDeviceUnits(6), LogicalToDeviceUnits(2));
+        }
     }
 
     private ToolStripMenuItem ChannelMenu()
@@ -343,12 +372,14 @@ internal sealed class MainForm : Form
 
     private void BuildToolbar()
     {
-        _toolbar.Items.Add(Button("Open", "Open an image (Ctrl+O)", OpenWithDialog));
+        _toolbar.AccessibleName = "Toolbar";
+        _toolbar.Padding = new Padding(LogicalToDeviceUnits(6), LogicalToDeviceUnits(3), LogicalToDeviceUnits(6), LogicalToDeviceUnits(3));
+        _toolbar.Items.Add(Button("Open", "Open an image (Ctrl+O)", OpenWithDialog, Theme.GlyphOpen));
         _toolbar.Items.Add(new ToolStripSeparator());
-        _toolbar.Items.Add(Button("Fit", "Fit to window (Ctrl+0)", _canvas.FitToWindow));
-        _toolbar.Items.Add(Button("100%", "Actual pixels (Ctrl+1)", () => _canvas.ActualPixels()));
-        _toolbar.Items.Add(Button("−", "Zoom out (−)", () => _canvas.ZoomOut()));
-        _toolbar.Items.Add(Button("+", "Zoom in (+)", () => _canvas.ZoomIn()));
+        _toolbar.Items.Add(Button("Fit", "Fit to window (Ctrl+0)", _canvas.FitToWindow, Theme.GlyphFit));
+        _toolbar.Items.Add(Button("100%", "Actual pixels (Ctrl+1)", () => _canvas.ActualPixels(), Theme.GlyphActualSize));
+        _toolbar.Items.Add(Button("−", "Zoom out (−)", () => _canvas.ZoomOut(), Theme.GlyphZoomOut, iconOnly: true));
+        _toolbar.Items.Add(Button("+", "Zoom in (+)", () => _canvas.ZoomIn(), Theme.GlyphZoomIn, iconOnly: true));
         _toolbar.Items.Add(new ToolStripSeparator());
         foreach (var (channel, label, tip) in new[]
         {
@@ -360,21 +391,50 @@ internal sealed class MainForm : Form
             (ChannelView.Alpha, "A", "Alpha channel as greyscale (Ctrl+7)"),
         })
         {
+            // A segmented control: the renderer colours each segment by its channel (Tag).
             var button = Button(label, tip, () => SetChannel(channel));
+            button.Tag = channel;
+            button.Font = Theme.UiSemibold;
+            button.AutoSize = false;
+            button.Size = new Size(LogicalToDeviceUnits(label.Length > 1 ? 46 : 32), LogicalToDeviceUnits(32));
+            button.Margin = new Padding(channel == ChannelView.Rgba ? LogicalToDeviceUnits(4) : 0, 0, channel == ChannelView.Alpha ? LogicalToDeviceUnits(4) : 0, 0);
             _channelButtons[channel] = button;
             _toolbar.Items.Add(button);
         }
 
         _toolbar.Items.Add(new ToolStripSeparator());
+        _alphaDrop.Padding = new Padding(LogicalToDeviceUnits(6), LogicalToDeviceUnits(4), LogicalToDeviceUnits(4), LogicalToDeviceUnits(4));
         _toolbar.Items.Add(_alphaDrop);
         _smoothButton = Button("Smooth", "Smooth scaling on or off (Ctrl+Shift+S, Ctrl+Shift+N)", () =>
-            SetScaling(_display.Scaling == ScalingMode.Smooth ? ScalingMode.Nearest : ScalingMode.Smooth));
-        _checkerButton = Button("Checker", "Checkerboard behind transparency (Ctrl+B)", ToggleCheckerboard);
+            SetScaling(_display.Scaling == ScalingMode.Smooth ? ScalingMode.Nearest : ScalingMode.Smooth), Theme.GlyphSmooth);
+        _checkerButton = Button("Checker", "Checkerboard behind transparency (Ctrl+B)", ToggleCheckerboard, Theme.GlyphChecker);
         _toolbar.Items.Add(_smoothButton);
         _toolbar.Items.Add(_checkerButton);
         _toolbar.Items.Add(new ToolStripSeparator());
-        _infoButton = Button("Info", "Information panel (F9)", () => ShowInfoPanel(!_infoPanel.Visible));
+        _infoButton = Button("Info", "Information panel (F9)", () => ShowInfoPanel(!_infoPanel.Visible), Theme.GlyphInfo);
         _toolbar.Items.Add(_infoButton);
+        foreach (ToolStripItem item in _toolbar.Items)
+        {
+            if (item is ToolStripSeparator separator)
+            {
+                separator.Margin = new Padding(LogicalToDeviceUnits(4), 0, LogicalToDeviceUnits(4), 0);
+            }
+        }
+
+        RefreshIcons();
+    }
+
+    /// <summary>Draws the toolbar icons at the window's current DPI.</summary>
+    private void RefreshIcons()
+    {
+        int size = LogicalToDeviceUnits(16);
+        _toolbar.ImageScalingSize = new Size(size, size);
+        foreach (var (item, glyph) in _icons)
+        {
+            var old = item.Image;
+            item.Image = Theme.Icon(glyph, size, Theme.Text);
+            old?.Dispose();
+        }
     }
 
     private void BuildStatusBar()
@@ -385,44 +445,65 @@ internal sealed class MainForm : Form
         _statusZoom.AccessibleName = "Zoom";
         _statusPixel.AccessibleName = "Pixel under the pointer";
         _statusWarnings.AccessibleName = "Warnings";
+        _statusFormat.ForeColor = Theme.Text;
+        _statusAlpha.ForeColor = Theme.TextMuted;
+        _statusZoom.ForeColor = Theme.TextMuted;
+        _statusPixel.Tag = PixelReadout.Tag; // the renderer colours its channel values
+        _statusWarnings.LinkColor = Theme.Warning;
+        _statusWarnings.ActiveLinkColor = Theme.Warning;
+        _statusWarnings.VisitedLinkColor = Theme.Warning;
+        _statusWarnings.LinkBehavior = LinkBehavior.HoverUnderline;
+        _status.AccessibleName = "Status";
+        // Only the left edge is widened: the default top and bottom padding and the right-hand room for the
+        // sizing grip are needed, or the stretching pixel field no longer fits and disappears.
+        _status.Padding = new Padding(LogicalToDeviceUnits(8), _status.Padding.Top, _status.Padding.Right, _status.Padding.Bottom);
         _status.Items.AddRange(new ToolStripItem[] { _statusFormat, _statusAlpha, _statusZoom, _statusPixel, _statusWarnings });
         _status.ShowItemToolTips = true;
+
+        // The renderer draws a divider on the left edge of each field after the first, while it has text.
+        foreach (var label in new[] { _statusAlpha, _statusZoom, _statusPixel })
+        {
+            label.Margin = new Padding(LogicalToDeviceUnits(6), label.Margin.Top, 0, label.Margin.Bottom);
+            label.Padding = new Padding(LogicalToDeviceUnits(8), 0, 0, 0);
+        }
     }
 
     private void BuildInfoPanel()
     {
         _infoPanel.Width = Math.Clamp(_settings.InfoPanelWidth, 220, 1400);
-        _inspectorText.Dock = DockStyle.Top;
-        _inspectorText.Height = LogicalToDeviceUnits(150);
-        _infoText.Dock = DockStyle.Fill;
-        _infoPanel.Controls.Add(_infoText);
+        _infoPanel.BackColor = Theme.Panel;
+        _splitter.BackColor = Theme.Divider;
+        _splitter.Width = LogicalToDeviceUnits(4);
+        Theme.UseDarkScrollBars(_inspectorText);
+        Theme.UseDarkScrollBars(_infoText);
+
+        var inspector = Padded(_inspectorText);
+        inspector.Dock = DockStyle.Top;
+        inspector.Height = LogicalToDeviceUnits(164);
+        var info = Padded(_infoText);
+        info.Dock = DockStyle.Fill;
+
+        // Docking is applied from the last control added, so these appear top to bottom in reverse.
+        _infoPanel.Controls.Add(info);
         _infoPanel.Controls.Add(_stampBox);
-        _infoPanel.Controls.Add(Caption("Image information"));
-        _infoPanel.Controls.Add(_inspectorText);
-        _infoPanel.Controls.Add(Caption("Pixel (point at the image; click to pin, Esc to release)"));
+        _infoPanel.Controls.Add(Header("Image information"));
+        _infoPanel.Controls.Add(inspector);
+        _infoPanel.Controls.Add(Header("Pixel", "point at the image; click to pin, Esc to release"));
     }
 
-    private Label Caption(string text) => new()
-    {
-        Text = text,
-        Dock = DockStyle.Top,
-        AutoSize = false,
-        Height = LogicalToDeviceUnits(22),
-        Padding = new Padding(4, 4, 0, 0),
-        Font = new Font(Font, FontStyle.Bold),
-    };
+    private SectionHeader Header(string title, string? hint = null) => new(title, hint) { Height = LogicalToDeviceUnits(32) };
 
-    private static TextBox ReadOnlyText(string name) => new()
+    private Panel Padded(Control content)
     {
-        Multiline = true,
-        ReadOnly = true,
-        ScrollBars = ScrollBars.Both,
-        WordWrap = false,
-        BorderStyle = BorderStyle.None,
-        BackColor = SystemColors.Window,
-        Font = new Font("Consolas", 9F),
-        AccessibleName = name,
-    };
+        var panel = new Panel
+        {
+            BackColor = Theme.Panel,
+            Padding = new Padding(LogicalToDeviceUnits(12), LogicalToDeviceUnits(8), LogicalToDeviceUnits(4), LogicalToDeviceUnits(4)),
+        };
+        content.Dock = DockStyle.Fill;
+        panel.Controls.Add(content);
+        return panel;
+    }
 
     private static ToolStripMenuItem Item(string text, Keys keys, Action action, string? shortcutText = null)
     {
@@ -441,9 +522,22 @@ internal sealed class MainForm : Form
         return item;
     }
 
-    private static ToolStripButton Button(string text, string tip, Action action)
+    private ToolStripButton Button(string text, string tip, Action action, char? glyph = null, bool iconOnly = false)
     {
-        var button = new ToolStripButton(text) { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = tip, AccessibleName = tip };
+        var button = new ToolStripButton(text)
+        {
+            DisplayStyle = glyph is null ? ToolStripItemDisplayStyle.Text : iconOnly ? ToolStripItemDisplayStyle.Image : ToolStripItemDisplayStyle.ImageAndText,
+            ImageScaling = ToolStripItemImageScaling.None,
+            TextImageRelation = TextImageRelation.ImageBeforeText,
+            ToolTipText = tip,
+            AccessibleName = tip,
+            Padding = new Padding(LogicalToDeviceUnits(iconOnly ? 6 : 8), LogicalToDeviceUnits(5), LogicalToDeviceUnits(iconOnly ? 6 : 10), LogicalToDeviceUnits(5)),
+        };
+        if (glyph is { } g)
+        {
+            _icons.Add((button, g));
+        }
+
         button.Click += (_, _) => action();
         return button;
     }
@@ -884,11 +978,11 @@ internal sealed class MainForm : Form
 
         if (_image is null || _decision is null)
         {
-            _infoText.Text = "No image is open.";
+            StyledText.SetReport(_infoText, "No image is open.");
             return;
         }
 
-        _infoText.Text = ImageReport.Build(_image, _path, _decision).ReplaceLineEndings("\r\n");
+        StyledText.SetReport(_infoText, ImageReport.Build(_image, _path, _decision).ReplaceLineEndings("\r\n"));
         if (_image.Metadata.PostageStamp.Value is { Width: > 0, Height: > 0 } stamp)
         {
             _stampBox.Image = StampBitmap(stamp, _decision.Interpretation);
@@ -909,11 +1003,11 @@ internal sealed class MainForm : Form
         _statusPixel.Text = (_pinned is not null ? "Pinned: " : "") + PixelInspector.Summarise(_image, p.X, p.Y);
         if (_infoPanel.Visible)
         {
-            _inspectorText.Text = PixelInspector.Describe(_image, p.X, p.Y, _decision).ReplaceLineEndings("\r\n");
+            StyledText.SetInspector(_inspectorText, PixelInspector.Describe(_image, p.X, p.Y, _decision).ReplaceLineEndings("\r\n"));
         }
     }
 
-    /// <summary>The postage stamp at its stored size, composited over a small checkerboard.</summary>
+    /// <summary>The postage stamp at its stored size, composited over a small checkerboard in the theme's colours.</summary>
     private static Bitmap StampBitmap(TgaPostageStamp stamp, AlphaInterpretation alpha)
     {
         var bitmap = new Bitmap(stamp.Width, stamp.Height, PixelFormat.Format32bppRgb);
@@ -921,7 +1015,7 @@ internal sealed class MainForm : Form
         {
             for (int x = 0; x < stamp.Width; x++)
             {
-                uint background = ((x / 4 + y / 4) & 1) == 0 ? 0xFFFFFFFF : 0xFFCCCCCC;
+                uint background = ((x / 4 + y / 4) & 1) == 0 ? Theme.CheckerLight : Theme.CheckerDark;
                 uint shown = DisplayRenderer.Composite(stamp.Pixels[y * stamp.Width + x], alpha, background);
                 bitmap.SetPixel(x, y, Color.FromArgb(unchecked((int)shown)));
             }

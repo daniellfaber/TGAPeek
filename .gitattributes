@@ -1,6 +1,7 @@
-# Test images, Pillow's raw pixel dumps and the icon are binary. Marking them stops core.autocrlf from
+# Test images, Pillow's raw pixel dumps, the icon and the design screenshots are binary. Marking them stops core.autocrlf from
 # treating a file without zero bytes as text and rewriting its 0x0D/0x0A bytes, which would corrupt the
 # reference data (ReferenceTests checks the inputs' SHA-256).
 *.tga  binary
 *.rgba binary
 *.ico  binary
+*.png  binary

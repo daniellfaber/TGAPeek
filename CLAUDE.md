@@ -7,7 +7,9 @@
    limitations, verification strategy; §14 records what Version 1 actually built.
 3. docs/FORMAT_COVERAGE.md: what is tested and how. docs/DECODER_EVALUATION.md: why the
    decoder is custom.
-4. This file: concise working rules.
+4. docs/DESIGN.md: the visual design system (dark only). Read before any UI change; record
+   the owner's design feedback in its feedback log.
+5. This file: concise working rules.
 If these documents disagree, do not guess or silently pick one: report the conflict and
 ask the user. The brief wins over the plan; the user's explicit decisions win over both.
 
@@ -35,6 +37,8 @@ v1 scope: viewing and inspection only. NO export/save/edit features.
 - Smoke test (opens windows on the user's desktop; sends keys only while the viewer is in
   front, else SKIPs; restores the settings file; -Exe picks the build):
   powershell -ExecutionPolicy Bypass -File tools/SmokeTest.ps1
+- Design screenshots (UI Automation only; never types into other programs):
+  powershell -ExecutionPolicy Bypass -File tools/CaptureScreenshots.ps1 -Prefix after
 - Release (the shipped build: uncompressed, not trimmed; see plan §14.3 for why):
   dotnet publish src/TGAPeek.App -p:PublishProfile=win-x64-self-contained
   Runtime packs 10.0.13 are in the NuGet cache (approved 2026-10-25). A newer SDK needing
@@ -133,6 +137,12 @@ loaded or displayed (memory/OS/GDI+ may fail); ambiguous-spec interpretations.
 - Public sample files: download only from a list the user has explicitly approved.
 - Keep docs/FORMAT_COVERAGE.md accurate. Never fabricate results; report skipped,
   blocked and untested items plainly.
+
+## Visual design rules (details in docs/DESIGN.md)
+- Styling never changes behaviour, pixel data, compositing or the text the Core produces.
+- Use the tokens in src/TGAPeek.App/Theme.cs. Chrome colours are never pure primaries, black,
+  white or pure greys: the smoke test counts exact image colours in the window.
+- Colour is never the only cue; keep all sizes DPI-scaled (LogicalToDeviceUnits).
 
 ## Code style
 Nullable enabled; Core builds with warnings as errors. Prefer small explicit code;
